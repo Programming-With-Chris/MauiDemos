@@ -1,5 +1,4 @@
-﻿
-namespace MauiGraphicsDemo;
+﻿namespace MauiGraphicsDemo;
 
 public partial class MainPage : ContentPage
 {
@@ -16,6 +15,7 @@ public partial class MainPage : ContentPage
 	{
 		//var clock = (ClockDrawable) this.ClockGraphicsView.Drawable;
 		var graphicsView = this.ClockGraphicsView;
+
 		graphicsView.Invalidate(); 
 	}
 }

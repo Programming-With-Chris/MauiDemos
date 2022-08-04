@@ -4,17 +4,12 @@
              xmlns:drawables="clr-namespace:MauiGraphicsDemo.Drawables"
              x:Class="MauiGraphicsDemo.MainPage">
 
+
     <ContentPage.Resources>
         <drawables:ClockDrawable x:Key="clockDrawable"/>
     </ContentPage.Resources>
 
-    <GraphicsView HeightRequest="150"
-                  WidthRequest="25"
-                  BackgroundColor="Aqua"
-                  Drawable="{StaticResource clockDrawable}"
-                  x:Name="ClockGraphicsView"
-                  >
-                  
+    <GraphicsView Drawable="{StaticResource clockDrawable}"
+                  x:Name="ClockGraphicsView">
     </GraphicsView>
-
 </ContentPage>

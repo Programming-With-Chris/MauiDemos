@@ -6,28 +6,29 @@ public class ClockDrawable : IDrawable
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         DateTime curTime = DateTime.Now;
-        var clockCenterPoint = new PointF(0, 0); 
+        var clockCenterPoint = new PointF(200, 300);
+        var circleRadius = 100; 
 
         canvas.StrokeColor = Colors.Aqua;
         canvas.StrokeSize = 6;
 
-        canvas.DrawCircle(clockCenterPoint, 100);
+        canvas.DrawCircle(clockCenterPoint, circleRadius);
         canvas.DrawCircle(clockCenterPoint, 5);
 
         canvas.StrokeSize = 4; 
-        var hourPoint = GetHourLine(curTime, 100); 
+        var hourPoint = GetHourHand(curTime, circleRadius, clockCenterPoint); 
         canvas.DrawLine(clockCenterPoint, hourPoint);
 
 
-        var minutePoint = GetMinuteLine(curTime, 100);
+        var minutePoint = GetMinuteHand(curTime, circleRadius, clockCenterPoint);
         canvas.DrawLine(clockCenterPoint, minutePoint);
 
-        var secondPoint =  GetSecondHand(curTime, 100);
+        var secondPoint = GetSecondHand(curTime, circleRadius, clockCenterPoint);
         canvas.DrawLine(clockCenterPoint, secondPoint);
 
     }
 
-    public static PointF GetHourLine(DateTime curTime, int radius)
+    internal static PointF GetHourHand(DateTime curTime, int radius, PointF center)
     {
 
         int currentHour = curTime.Hour;
@@ -38,13 +39,13 @@ public class ClockDrawable : IDrawable
         var angleDegrees = (currentHour * 360) / 12;
         var angle = (Math.PI / 180.0) * angleDegrees;
 
-        var hourShorter = radius * .8; 
-        PointF outerPoint = new((float)(hourShorter * Math.Sin(angle)), (float)(-hourShorter * Math.Cos(angle))); 
+        var hourShorter = radius * .8;
+        PointF outerPoint = new((float)(hourShorter * Math.Sin(angle)) + center.X, (float)(-hourShorter * Math.Cos(angle)) + center.Y);
 
         return outerPoint; 
     }
 
-    public static PointF GetMinuteLine(DateTime curTime, int radius)
+    internal static PointF GetMinuteHand(DateTime curTime, int radius, PointF center)
     {
 
         int currentMin =  curTime.Minute;
@@ -52,11 +53,12 @@ public class ClockDrawable : IDrawable
         var angleDegrees = (currentMin * 360) / 60;
         var angle = (Math.PI / 180.0) * angleDegrees; 
 
-        PointF outerPoint = new((float)(radius * Math.Sin(angle)), (float)(-radius * Math.Cos(angle))); 
+        PointF outerPoint = new((float)(radius * Math.Sin(angle)) + center.X, (float)(-radius * Math.Cos(angle)) + center.Y); 
 
         return outerPoint; 
     }
-    public static PointF GetSecondHand(DateTime curTime, int radius)
+    
+    internal static PointF GetSecondHand(DateTime curTime, int radius, PointF center)
     {
 
         int currentSecond = curTime.Second;
@@ -64,7 +66,7 @@ public class ClockDrawable : IDrawable
         var angleDegrees = (currentSecond * 360) / 60;
         var angle = (Math.PI / 180.0) * angleDegrees; 
 
-        PointF outerPoint = new((float)(radius * Math.Sin(angle)), (float)(-radius * Math.Cos(angle))); 
+        PointF outerPoint = new((float)(radius * Math.Sin(angle) + center.X), (float)(-radius * Math.Cos(angle)) + center.Y); 
 
         return outerPoint; 
     }
