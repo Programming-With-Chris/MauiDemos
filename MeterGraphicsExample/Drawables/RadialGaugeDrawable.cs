@@ -3,6 +3,9 @@ namespace MeterGraphicsExample.Drawables;
 
 public class RadialGaugeDrawable : BaseDrawable, IDrawable
 {
+    private double _emptyAngle = 0d;
+    private double _removeCirclePercentage = 0d; 
+    
     public int MaxValue { get; set; }
     public int Steps { get; set; } = 48;
     public float GaugeThickness { get; set; } = 1f;
@@ -55,11 +58,22 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
         // Use a Path to cancel out the bottom part of the circle, finishing the gauge
         var path = new PathF();
+
+        Point top = new Point(dirtyRect.Width / 2, dirtyRect.Height / 2);
+        Point bottomLeft = new Point(dirtyRect.X, dirtyRect.Height + 3);
+        Point bottomRight = new Point(dirtyRect.Width, dirtyRect.Height + 3);
+
+        _emptyAngle = GetAngleDegrees(top, bottomLeft, bottomRight);
+        _removeCirclePercentage = (180 - (_emptyAngle / 2)) / 360;
+
         path.MoveTo(dirtyRect.Width / 2, dirtyRect.Height / 2);
         path.LineTo(dirtyRect.X, dirtyRect.Height + 3);
         path.LineTo(dirtyRect.Width, dirtyRect.Height + 3);
         path.LineTo(dirtyRect.Width / 2, dirtyRect.Height / 2);
+        
         canvas.FillPath(path);
+
+        
 
 
         if (FillValue > MaxValue)
@@ -93,10 +107,9 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         var zeroPos = ((fillAmount - 0.0) / ( MaxValue - 0.0) * 2.0) - 1.0;
         var angleDegrees = ((zeroPos * 100) * 360.0) / MaxValue;
 
-        // Looks like a magic number, because it is! - But this was how I adjusted the
-        // angle to match up with our gauge start and end points - it's 130 / 360, since thats
-        // the area we took out of the circle on the bottom.
-        angleDegrees *= 0.36f;
+        //reduce the angle down from -360 - 360 to our 'non-removed circle' angles
+        angleDegrees *= _removeCirclePercentage;
+
         var angleRadians = (Math.PI / 180.0) * angleDegrees;
 
         var radius = (limitingDim / (GaugeThickness + 2) * 1.5);
@@ -125,7 +138,7 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
             var zeroPos = ((stepScale * MaxValue - 0.0) / ( MaxValue - 0.0) * 2.0) - 1.0;
             var angleDegrees = ((zeroPos * 100) * 360.0) / MaxValue;
 
-            angleDegrees *= 0.36f;
+            angleDegrees *= _removeCirclePercentage;
             var angleRadians = (Math.PI / 180.0) * angleDegrees;
 
             var limitingDim = dirtyRect.Width < dirtyRect.Height ? dirtyRect.Width : dirtyRect.Height;
@@ -142,5 +155,13 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
             canvas.DrawString(percentOfMax.ToString(), stringPoint.X, stringPoint.Y, HorizontalAlignment.Center); 
         }
+    }
+
+    //A method to determine the angle of 2 vectors, P1 -> P2, and P1 -> P3
+    private double GetAngleDegrees(PointF p1, PointF p2, PointF p3)
+    {
+        var angle = Math.Atan2(p2.Y - p1.Y, p2.X - p1.X) - Math.Atan2(p3.Y - p1.Y, p3.X - p1.X);
+        var degrees = (180 / Math.PI) * angle; 
+        return degrees;
     }
 }
