@@ -29,6 +29,7 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
         var limitingDim = dirtyRect.Width < dirtyRect.Height ? dirtyRect.Width : dirtyRect.Height;
 
+        var circleCenter = new PointF(dirtyRect.Width / 2, dirtyRect.Height / 2);
 
         if (GradiantFill)
         {
@@ -44,17 +45,17 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         else
             canvas.FillColor = Colors.Green;
 
-        canvas.FillCircle(dirtyRect.Width / 2, (dirtyRect.Height / 2), limitingDim / 2);
+        canvas.FillCircle(circleCenter.X, circleCenter.Y, limitingDim / 2);
         canvas.StrokeColor = Colors.Black;
         canvas.StrokeSize = 2;
-        canvas.DrawCircle(dirtyRect.Width / 2, dirtyRect.Height / 2, limitingDim / 2); 
+        canvas.DrawCircle(circleCenter.X, circleCenter.Y, limitingDim / 2); 
 
         canvas.FillColor = Colors.White;
         canvas.SetFillPaint(new LinearGradientPaint(), dirtyRect);
         canvas.StrokeColor = Colors.Black;
         canvas.StrokeSize = 3;
-        canvas.FillCircle(dirtyRect.Width / 2, dirtyRect.Height / 2, limitingDim / (GaugeThickness + 2));
-        canvas.DrawCircle(dirtyRect.Width / 2, dirtyRect.Height / 2, limitingDim / (GaugeThickness + 2));
+        canvas.FillCircle(circleCenter.X, circleCenter.Y, limitingDim / (GaugeThickness + 2));
+        canvas.DrawCircle(circleCenter.X, circleCenter.Y, limitingDim / (GaugeThickness + 2));
 
         // Use a Path to cancel out the bottom part of the circle, finishing the gauge
         var path = new PathF();
@@ -66,7 +67,7 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         _emptyAngle = GetAngleDegrees(top, bottomLeft, bottomRight);
         _removeCirclePercentage = (180 - (_emptyAngle / 2)) / 360;
 
-        path.MoveTo(dirtyRect.Width / 2, dirtyRect.Height / 2);
+        path.MoveTo(circleCenter.X, circleCenter.Y);
         path.LineTo(dirtyRect.X, dirtyRect.Height + 3);
         path.LineTo(dirtyRect.Width, dirtyRect.Height + 3);
         path.LineTo(dirtyRect.Width / 2, dirtyRect.Height / 2);
@@ -83,7 +84,8 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
             FillValue = 0;
 
         DrawNeedle(canvas, dirtyRect, FillValue);
-        DrawTickMarks(canvas, dirtyRect, Steps); 
+        DrawTickMarks(canvas, dirtyRect, Steps);
+        DrawNumDisplay(canvas, circleCenter);
 
     }
 
@@ -157,6 +159,15 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         }
     }
 
+    private void DrawNumDisplay(ICanvas canvas, PointF centerPoint)
+    {
+        var fillString = FillValue.ToString();
+
+        var textLoc = centerPoint.Offset(0, 50);
+        canvas.FontSize = 25;
+        canvas.DrawString(fillString, textLoc.X, textLoc.Y, HorizontalAlignment.Center);
+    }
+    
     //A method to determine the angle of 2 vectors, P1 -> P2, and P1 -> P3
     private double GetAngleDegrees(PointF p1, PointF p2, PointF p3)
     {
