@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:drawables="clr-namespace:MeterGraphicsExample.Drawables"
+             x:Class="MeterGraphicsExample.MainPage"
+             BackgroundColor="White">
+
+    <ContentPage.Resources>
+        <drawables:MeterDrawable x:Key="meterDrawable"/>
+        <drawables:RadialGaugeDrawable x:Key="radialGaugeDrawable"/>
+    </ContentPage.Resources>
+
+    <Grid ColumnDefinitions="*,*,*"
+          RowDefinitions="*,*,Auto">
+
+
+        <GraphicsView Drawable="{StaticResource meterDrawable}"
+                      x:Name="MeterDrawableView"
+                      Grid.ColumnSpan="1"
+                      Grid.Column="1"
+                      Grid.Row="0"
+                      Margin="10,10,10,10"/>
+
+        <GraphicsView Drawable="{StaticResource radialGaugeDrawable}"
+                      x:Name="RadialGaugeView"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      Grid.Row="1"
+                      Margin="30,40,40,30"
+                      />
+
+        <Button Text="Do Not Touch This Button"
+               Grid.Row="2"
+                Grid.ColumnSpan="3"
+               Grid.Column="0"
+                BackgroundColor="Red"
+                TextColor="White"
+                Clicked="DontTouchTheButton"
+                Margin="10,10,10,10"/>
+    </Grid>
+
+</ContentPage>

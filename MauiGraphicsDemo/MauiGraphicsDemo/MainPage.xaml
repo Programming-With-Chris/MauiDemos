@@ -12,4 +12,5 @@
     <GraphicsView Drawable="{StaticResource clockDrawable}"
                   x:Name="ClockGraphicsView">
     </GraphicsView>
+
 </ContentPage>

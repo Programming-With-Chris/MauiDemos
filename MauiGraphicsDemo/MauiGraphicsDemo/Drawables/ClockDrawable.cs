@@ -9,6 +9,7 @@ public class ClockDrawable : IDrawable
         var clockCenterPoint = new PointF(200, 300);
         var circleRadius = 100; 
 
+        
         canvas.StrokeColor = Colors.Aqua;
         canvas.StrokeSize = 6;
 
