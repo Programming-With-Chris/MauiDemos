@@ -27,9 +27,9 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         canvas.FillColor = Colors.Green;
 
 
-        var limitingDim = dirtyRect.Width < dirtyRect.Height ? dirtyRect.Width : dirtyRect.Height;
+        float limitingDim = dirtyRect.Width < dirtyRect.Height ? dirtyRect.Width : dirtyRect.Height;
 
-        var circleCenter = new PointF(dirtyRect.Width / 2, dirtyRect.Height / 2);
+        var circleCenter = new PointF((dirtyRect.Width / 2), (dirtyRect.Height / 2));
 
         if (GradiantFill)
         {
@@ -45,34 +45,42 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         else
             canvas.FillColor = Colors.Green;
 
+
+        // This is the best way to do remove the bottom side of the gauge
+        // BUT unfortunately this isn't implemented yet on Windows
+        // So if you try to do ClipPath on windows, it'll crash.
+        // Github issue here - https://github.com/dotnet/Microsoft.Maui.Graphics/issues/250
+        var path = new PathF();
+        
+        path.MoveTo(circleCenter.X, circleCenter.Y);
+        path.LineTo(dirtyRect.X + 5, dirtyRect.Height);
+        path.LineTo(dirtyRect.X, dirtyRect.Y - 10);
+        path.LineTo(dirtyRect.Width, dirtyRect.Y - 10);
+        path.LineTo(dirtyRect.Width, dirtyRect.Height);
+        path.LineTo(circleCenter.X, circleCenter.Y);
+        
+        canvas.ClipPath(path);
+
         canvas.FillCircle(circleCenter.X, circleCenter.Y, limitingDim / 2);
         canvas.StrokeColor = Colors.Black;
         canvas.StrokeSize = 2;
         canvas.DrawCircle(circleCenter.X, circleCenter.Y, limitingDim / 2); 
 
-        canvas.FillColor = Colors.White;
-        canvas.SetFillPaint(new LinearGradientPaint(), dirtyRect);
+        canvas.SetFillPaint(new SolidPaint(Colors.White), dirtyRect);
         canvas.StrokeColor = Colors.Black;
         canvas.StrokeSize = 3;
         canvas.FillCircle(circleCenter.X, circleCenter.Y, limitingDim / (GaugeThickness + 2));
         canvas.DrawCircle(circleCenter.X, circleCenter.Y, limitingDim / (GaugeThickness + 2));
 
         // Use a Path to cancel out the bottom part of the circle, finishing the gauge
-        var path = new PathF();
 
-        Point top = new Point(dirtyRect.Width / 2, dirtyRect.Height / 2);
-        Point bottomLeft = new Point(dirtyRect.X, dirtyRect.Height + 3);
-        Point bottomRight = new Point(dirtyRect.Width, dirtyRect.Height + 3);
+        var top = new Point(dirtyRect.Width / 2, dirtyRect.Height / 2);
+        var bottomLeft = new Point(dirtyRect.X, dirtyRect.Height + 3);
+        var bottomRight = new Point(dirtyRect.Width, dirtyRect.Height + 3);
 
         _emptyAngle = GetAngleDegrees(top, bottomLeft, bottomRight);
         _removeCirclePercentage = (180 - (_emptyAngle / 2)) / 360;
 
-        path.MoveTo(circleCenter.X, circleCenter.Y);
-        path.LineTo(dirtyRect.X, dirtyRect.Height + 3);
-        path.LineTo(dirtyRect.Width, dirtyRect.Height + 3);
-        path.LineTo(dirtyRect.Width / 2, dirtyRect.Height / 2);
-        
-        canvas.FillPath(path);
 
         
 
