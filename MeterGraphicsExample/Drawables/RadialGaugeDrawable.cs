@@ -16,6 +16,8 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
     public Color NeedleColor { get; set; }
 
+    public Color MiddleAreaColor { get; set; } = Colors.White;
+
     public bool GradiantFill { get; set; } = false;
 
 
@@ -45,6 +47,7 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
         else
             canvas.FillColor = Colors.Green;
 
+        DrawNumDisplay(canvas, circleCenter);
 
         // This is the best way to do remove the bottom side of the gauge
         // BUT unfortunately this isn't implemented yet on Windows
@@ -93,7 +96,6 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
 
         DrawNeedle(canvas, dirtyRect, FillValue);
         DrawTickMarks(canvas, dirtyRect, Steps);
-        DrawNumDisplay(canvas, circleCenter);
 
     }
 
