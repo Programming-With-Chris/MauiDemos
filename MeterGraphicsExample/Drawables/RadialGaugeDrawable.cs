@@ -133,6 +133,7 @@ public class RadialGaugeDrawable : BaseDrawable, IDrawable
     private void DrawTickMarks(ICanvas canvas, RectF dirtyRect, int steps)
     {
 
+        canvas.FontSize = 10;
         for (int i = 0; i < steps; i++)
         {
             var stepScale = (double)i / steps;
